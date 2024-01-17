@@ -1,0 +1,51 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body class="container mt-4">
+    <h1>Add Product</h1>
+
+    <form method="post" action="/api/products">
+        <div class="mb-3">
+            <label for="name" class="form-label">Product Name</label><span style="color: red;">*</span>
+            <input type="text" class="form-control" name="name" placeholder="Enter Your Product Name" />
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Product Price</label><span style="color: red;">*</span>
+            <input type="number" class="form-control" name="price"
+                placeholder="Enter Your Product Price" />
+        </div> 
+        <div class="mb-3"> 
+            <label for="featured" class="form-label">Product Featured</label>
+            <select class="form-select" name="featured">
+                <option value="false">false</option>
+                <option value="true">true</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="rating" class="form-label">Product Rating</label>
+            <input type="number" class="form-control" name="rating" placeholder="Enter Your Product Rating" />
+        </div>
+        <div class="mb-3">
+            <label for="company" class="form-label">Product Company</label><span style="color: red;">*</span>
+            <select class="form-select" name="company">
+                <option value="apple">apple</option>
+                <option value="samsung">samsung</option>
+                <option value="dell">dell</option>
+                <option value="mi">mi</option>
+                <option value="asus">asus</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </div>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <title>Document</title>
+    {{> _head}}
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 3px 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Product</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <input type="hidden" name="_id" id="id">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Product Name</label><span style="color: red;">*</span>
+                            <input type="text" class="form-control" name="name" placeholder="Enter Your Product Name"
+                                id="name" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Product Price</label><span
+                                style="color: red;">*</span>
+                            <input type="number" class="form-control" name="price"
+                                placeholder="Enter Your Product Price" id="price" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="featured" class="form-label">Product Featured</label>
+                            <select class="form-select" name="featured" id="featured">
+                                <option data-value="false" value="false">false</option>
+                                <option data-value="true" value="true">true</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Product Rating</label>
+                            <input type="number" class="form-control" name="rating" id="rating"
+                                placeholder="Enter Your Product Rating" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="company" class="form-label">Product Company</label><span
+                                style="color: red;">*</span>
+                            <select class="form-select" name="company" id="company">
+                                <option data-value="apple" value="apple">apple</option>
+                                <option data-value="samsung" value="samsung">samsung</option>
+                                <option data-value="dell" value="dell">dell</option>
+                                <option data-value="mi" value="mi">mi</option>
+                                <option data-value="asus" value="asus">asus</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="button" onclick="submitForm()" class="btn btn-primary">Update
+                                Product</button>
+                        </div>
+                    </form>
+                    {{!-- --}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    {{!-- <button type="button" class="btn btn-primary">Save changes</button> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{!-- Update User --}}
+    <div class="container mt-4">
+        <h1>Update and Delete Product</h1>
+        <table border="1" class="mt-4" id="updateTable">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>name</th>
+                    <th>price</th>
+                    <th>featured</th>
+                    <th>rating</th>
+                    <th>company</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each Products}}
+                <tr>
+                    <td>{{ @index }}</td>
+                    <td>{{ name }}</td>
+                    <td>{{ price }}</td>
+                    <td> {{ featured }}</td>
+                    <td> {{ rating }}</td>
+                    <td> {{ company }}</td>
+                    <td id="{{ _id }}" style="text-align: center;" data-action="btn">
+                        <i style="cursor: pointer; color: green" onclick="addData(this)" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal" class="fa-duotone fa-pen-nib"></i>
+
+                        <i style="cursor: pointer; color: red" onclick="deleteProduct(this)"
+                            class="fa-duotone fa-trash mx-2"></i>
+
+                        <a href="/api/products/{{_id}}"><i style="cursor: pointer;" class="fa-duotone fa-brackets-curly"></i></a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</body>
+{{> _footer}}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script>
+    /* Initial DataTable*/
+    let table = new DataTable('#updateTable', {
+        responsive: true
+    });
+
+    /* Update Products */
+    /* Add Data */
+    function addData(btn) {
+        let parent = btn.parentElement.id;
+
+        let name = document.getElementById(parent).parentElement.children[1].innerText;
+        let price = document.getElementById(parent).parentElement.children[2].innerText;
+        let featured = document.getElementById(parent).parentElement.children[3].innerText;
+        let rating = document.getElementById(parent).parentElement.children[4].innerText;
+        let company = document.getElementById(parent).parentElement.children[5].innerText;
+        let id = document.getElementById(parent).parentElement.children[6].id;
+
+        document.getElementById('name').value = name;
+        document.getElementById('price').value = price;
+        document.getElementById('rating').value = rating;
+        document.getElementById('id').value = id;
+        document.getElementById('featured').querySelector(`[data-value=${featured}]`).setAttribute('selected', true)
+        document.getElementById('company').querySelector(`[data-value=${company}]`).setAttribute('selected', true)
+    }
+
+    /* Form Submit */
+    function submitForm() {
+        const id = document.getElementById('id').value
+        const name = document.getElementById('name').value
+        const price = document.getElementById('price').value
+        const rating = document.getElementById('rating').value
+        const featured = document.getElementById('featured').value
+        const company = document.getElementById('company').value
+
+
+        fetch(`/api/products/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "name": name,
+                "price": price,
+                "featured": featured,
+                "rating": rating,
+                "company": company,
+            }),
+        })
+            .then(data => {
+                alert("Produch Update");
+                location.reload();
+            })
+            .catch(error => {
+                alert("Produch Not Update");
+            });
+    }
+
+    /* Delete Products */
+    function deleteProduct(btn) {
+        let id = btn.parentElement.id;
+
+        fetch(`/api/products/${id}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(data => {
+                alert("Produch Deleted");
+                location.reload();
+            })
+            .catch(error => {
+                alert("Produch not Deleted");
+            });
+    }
+</script>
+
+</html>
