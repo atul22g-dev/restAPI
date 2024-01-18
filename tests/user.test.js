@@ -5,8 +5,10 @@ const Product = require('../models/Product.model');
 
 // Setup connection to the database
 beforeAll(async () => {
-  await mongoose.connect(
-    `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
+  let DB = process.env.DB;
+  mongoose.set("strictQuery", true);
+  // Connect to MongoDB
+  mongoose.connect( DB,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

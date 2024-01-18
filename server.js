@@ -33,14 +33,14 @@ hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 // Middlewares
 app.use(express.json()); // for parsing application/json
 
+let DB = process.env.DB;
+mongoose.set("strictQuery", true);
+
 // Connect to MongoDB
-mongoose.connect(
-  `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
+mongoose.connect(DB,
   {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
-    user: process.env.DB_USER,
-    pass: process.env.DB_PASS,
+    useUnifiedTopology: true
   },
   (err) => {
     if (err) {

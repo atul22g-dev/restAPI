@@ -5,9 +5,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connectDB = async () => {
+  let DB = process.env.DB;
   try {
-    await mongoose.connect(
-      `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
+    mongoose.set("strictQuery", true);
+    // Connect to MongoDB
+    mongoose.connect(DB,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
