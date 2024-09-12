@@ -53,6 +53,15 @@ mongoose.connect(DB,
 
 console.log("Fix Ths ============");
 // Routes
+app.get('/db-status', async (req, res) => {
+  const db = mongoose.connection;
+  console.log(db.readyState);
+  if (db.readyState === 1) {
+    res.status(200).send('Database is connected');
+  } else {
+    res.status(500).send('Database is not connected');
+  }
+});
 app.use('/', notesRoutes);
 // app.use('/api/users', authMiddleware, userRoutes);
 app.use('/api/products', userRoutes);
