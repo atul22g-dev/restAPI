@@ -51,7 +51,6 @@ mongoose.connect(DB,
   }
 );
 
-console.log("Fix Ths ============");
 // Routes
 app.get('/db-status', async (req, res) => {
   const db = mongoose.connection;
