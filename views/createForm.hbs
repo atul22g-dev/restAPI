@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>ProductAPI - Add Product</title>
   {{> _head}}
 </head>
+
 <body>
   {{> _navbar}}
 
@@ -12,7 +14,7 @@
       <div class="col-lg-8 animate-fade-up">
         <!-- Header -->
         <div class="d-flex align-items-center gap-3 mb-4">
-          <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #198754;">
+          <div class="icon-box icon-box-success">
             <i class="fa-solid fa-cart-plus"></i>
           </div>
           <div>
@@ -28,11 +30,11 @@
               <!-- Product Name -->
               <div class="col-md-6">
                 <div class="form-floating">
-                  <input type="text" class="form-control modern-input" id="name" name="name" 
-                    placeholder="Product Name" required minlength="2" maxlength="100">
+                  <input type="text" class="form-control modern-input" id="name" name="name" required minlength="2"
+                    maxlength="100">
                   <label for="name">
-                    <i class="fa-solid fa-tag me-1" style="color: #0d6efd;"></i>
-                    Product Name <span style="color: #dc3545;">*</span>
+                    <i class="fa-solid fa-tag me-1 text-color-primary"></i>
+                    Product Name <span class="text-color-danger">*</span>
                   </label>
                   <div class="invalid-feedback">Please enter a valid product name</div>
                 </div>
@@ -41,11 +43,10 @@
               <!-- Product Price -->
               <div class="col-md-6">
                 <div class="form-floating">
-                  <input type="number" class="form-control modern-input" id="price" name="price" 
-                    placeholder="Product Price" required min="0" step="0.01">
+                  <input type="number" class="form-control modern-input" id="price" name="price" required min="0" step="0.01">
                   <label for="price">
-                    <i class="fa-solid fa-indian-rupee-sign me-1" style="color: #0d6efd;"></i>
-                    Product Price <span style="color: #dc3545;">*</span>
+                    <i class="fa-solid fa-indian-rupee-sign me-1 text-color-primary"></i>
+                    Product Price <span class="text-color-danger">*</span>
                   </label>
                   <div class="invalid-feedback">Please enter a valid price (must be 0 or greater)</div>
                 </div>
@@ -63,8 +64,8 @@
                     <option value="asus">🔲 ASUS</option>
                   </select>
                   <label for="company">
-                    <i class="fa-solid fa-building me-1" style="color: #0d6efd;"></i>
-                    Company <span style="color: #dc3545;">*</span>
+                    <i class="fa-solid fa-building me-1 text-color-primary"></i>
+                    Company <span class="text-color-danger">*</span>
                   </label>
                   <div class="invalid-feedback">Please select a company</div>
                 </div>
@@ -73,10 +74,10 @@
               <!-- Rating -->
               <div class="col-md-6">
                 <div class="form-floating">
-                  <input type="number" class="form-control modern-input" id="rating" name="rating" 
-                    placeholder="Rating" min="0" max="5" step="0.1">
+                  <input type="number" class="form-control modern-input" id="rating" name="rating"
+                    min="0" max="5" step="0.1">
                   <label for="rating">
-                    <i class="fa-solid fa-star me-1" style="color: #ffb800;"></i>
+                    <i class="fa-solid fa-star me-1 text-color-star"></i>
                     Rating (0-5)
                   </label>
                   <div class="invalid-feedback">Rating must be between 0 and 5</div>
@@ -85,14 +86,14 @@
 
               <!-- Featured Toggle -->
               <div class="col-12">
-                <div class="d-flex align-items-center gap-3 p-3" style="background: #f8f9fa; border-radius: 12px;">
+                <div class="d-flex align-items-center gap-3 p-3 bg-soft-section" style="border-radius: 12px;">
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="featured" name="featured" 
+                    <input class="form-check-input" type="checkbox" id="featured" name="featured"
                       style="width: 3rem; height: 1.5rem; cursor: pointer;">
                   </div>
                   <div>
                     <label for="featured" class="fw-semibold" style="cursor: pointer;">
-                      <i class="fa-solid fa-star me-1" style="color: #ffb800;"></i>
+                      <i class="fa-solid fa-star me-1 text-color-star"></i>
                       Featured Product
                     </label>
                     <p class="text-muted small mb-0">Mark this product as featured to highlight it in listings</p>
@@ -109,7 +110,7 @@
                 <div class="spinner-border spinner-border-sm d-none" id="btnSpinner" role="status"></div>
               </button>
               <a href="/" class="btn btn-outline-gradient">Cancel</a>
-              <button type="reset" class="btn btn-outline-secondary rounded-pill px-4" style="border-radius: 12px !important;">Reset</button>
+              <button type="reset" class="btn btn-outline-secondary rounded-pill px-4">Reset</button>
             </div>
           </form>
         </div>
@@ -207,4 +208,5 @@
     }
   </script>
 </body>
+
 </html>
