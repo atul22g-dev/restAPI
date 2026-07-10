@@ -38,6 +38,7 @@ app.use(helmet({
         'https://code.jquery.com',
         'https://cdn.datatables.net',
       ],
+      'script-src-attr': ["'unsafe-inline'"],
       'style-src': [
         "'self'",
         "'unsafe-inline'",
