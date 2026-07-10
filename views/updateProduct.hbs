@@ -1,206 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/atul22g/CDN@latest/liberies/FontAwesome6Pro@6.2.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    <title>Document</title>
-    {{> _head}}
-    <style>
-        table,
-        th,
-        td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 3px 5px;
-        }
-    </style>
+  <title>ProductAPI - Manage Products</title>
+  {{> _head}}
 </head>
-
 <body>
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Product</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <input type="hidden" name="_id" id="id">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Product Name</label><span style="color: red;">*</span>
-                            <input type="text" class="form-control" name="name" placeholder="Enter Your Product Name"
-                                id="name" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="price" class="form-label">Product Price</label><span
-                                style="color: red;">*</span>
-                            <input type="number" class="form-control" name="price"
-                                placeholder="Enter Your Product Price" id="price" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="featured" class="form-label">Product Featured</label>
-                            <select class="form-select" name="featured" id="featured">
-                                <option data-value="false" value="false">false</option>
-                                <option data-value="true" value="true">true</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Product Rating</label>
-                            <input type="number" class="form-control" name="rating" id="rating"
-                                placeholder="Enter Your Product Rating" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="company" class="form-label">Product Company</label><span
-                                style="color: red;">*</span>
-                            <select class="form-select" name="company" id="company">
-                                <option data-value="apple" value="apple">apple</option>
-                                <option data-value="samsung" value="samsung">samsung</option>
-                                <option data-value="dell" value="dell">dell</option>
-                                <option data-value="mi" value="mi">mi</option>
-                                <option data-value="asus" value="asus">asus</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
-                            <button type="button" onclick="submitForm()" class="btn btn-primary">Update
-                                Product</button>
-                        </div>
-                    </form>
-                    {{!-- --}}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    {{!-- <button type="button" class="btn btn-primary">Save changes</button> --}}
-                </div>
-            </div>
+  {{> _navbar}}
+
+  <div class="container">
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-up">
+      <div class="d-flex align-items-center gap-3">
+        <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #e8f4fd, #d0e8ff); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #0d6efd;">
+          <i class="fa-solid fa-table"></i>
         </div>
+        <div>
+          <h3 class="fw-bold mb-1">Manage Products</h3>
+          <p class="text-muted mb-0">View, edit, and delete your products</p>
+        </div>
+      </div>
+      <a href="/create" class="btn btn-gradient d-none d-md-flex">
+        <i class="fa-solid fa-plus me-2"></i>Add Product
+      </a>
     </div>
 
-    {{!-- Update User --}}
-    <div class="container mt-4">
-        <h1>Update and Delete Product</h1>
-        <table border="1" class="mt-4" id="updateTable">
-            <thead>
-                <tr>
-                    <th>S.No</th>
-                    <th>name</th>
-                    <th>price</th>
-                    <th>featured</th>
-                    <th>rating</th>
-                    <th>company</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each Products}}
-                <tr>
-                    <td>{{ @index }}</td>
-                    <td>{{ name }}</td>
-                    <td>{{ price }}</td>
-                    <td> {{ featured }}</td>
-                    <td> {{ rating }}</td>
-                    <td> {{ company }}</td>
-                    <td id="{{ _id }}" style="text-align: center;" data-action="btn">
-                        <i style="cursor: pointer; color: green" onclick="addData(this)" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal" class="fa-duotone fa-pen-nib"></i>
-
-                        <i style="cursor: pointer; color: red" onclick="deleteProduct(this)"
-                            class="fa-duotone fa-trash mx-2"></i>
-
-                        <a href="/api/products/{{_id}}"><i style="cursor: pointer;" class="fa-duotone fa-brackets-curly"></i></a>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
+    <!-- Products Table Card -->
+    <div class="modern-card p-3 p-lg-4 animate-fade-up animate-delay-1">
+      <div class="table-responsive">
+        <table class="modern-table" id="productsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Company</th>
+              <th>Rating</th>
+              <th>Featured</th>
+              <th style="width: 120px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each Products}}
+            <tr data-id="{{ _id }}">
+              <td class="fw-semibold text-muted">{{ @index }}</td>
+              <td class="fw-semibold">{{ name }}</td>
+              <td class="fw-bold" style="color: #198754;">${{ price }}</td>
+              <td>
+                <span class="company-badge company-{{ company }}">
+                  <i class="fa-solid fa-building"></i> {{ company }}
+                </span>
+              </td>
+              <td>
+                <div class="stars" data-rating="{{ rating }}">
+                  <span style="color: #6c757d; font-size: 0.8rem;">({{ rating }})</span>
+                </div>
+              </td>
+              <td>
+                {{#if featured}}
+                  <span class="featured-badge featured-yes"><i class="fa-solid fa-check me-1"></i>Yes</span>
+                {{else}}
+                  <span class="featured-badge featured-no"><i class="fa-solid fa-xmark me-1"></i>No</span>
+                {{/if}}
+              </td>
+              <td>
+                <div class="d-flex gap-2">
+                  <button class="action-btn action-btn-edit" onclick="editProduct('{{ _id }}')" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button class="action-btn action-btn-delete" onclick="deleteProduct('{{ _id }}')" title="Delete">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                  <a href="/api/products/{{ _id }}" target="_blank" class="action-btn action-btn-view" title="View JSON">
+                    <i class="fa-solid fa-code"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
         </table>
+      </div>
+      {{#unless Products.length}}
+      <div class="text-center py-5">
+        <i class="fa-solid fa-box-open mb-3" style="font-size: 3rem; color: #dde0e3;"></i>
+        <h5 class="text-muted">No products yet</h5>
+        <p class="text-muted small">Click "Add Product" to create your first product</p>
+        <a href="/create" class="btn btn-gradient mt-2">
+          <i class="fa-solid fa-plus me-2"></i>Add Product
+        </a>
+      </div>
+      {{/unless}}
     </div>
-</body>
-{{> _footer}}
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script>
-    /* Initial DataTable*/
-    let table = new DataTable('#updateTable', {
-        responsive: true
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-pen me-2" style="color: #0d6efd;"></i>
+            Edit Product
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm">
+            <input type="hidden" id="editId">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Product Name <span style="color: #dc3545;">*</span></label>
+              <input type="text" class="form-control modern-input" id="editName" required minlength="2">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Price <span style="color: #dc3545;">*</span></label>
+              <input type="number" class="form-control modern-input" id="editPrice" required min="0" step="0.01">
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Company <span style="color: #dc3545;">*</span></label>
+                <select class="form-select modern-input" id="editCompany" required>
+                  <option value="apple">Apple</option>
+                  <option value="samsung">Samsung</option>
+                  <option value="dell">Dell</option>
+                  <option value="mi">MI</option>
+                  <option value="asus">ASUS</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Rating</label>
+                <input type="number" class="form-control modern-input" id="editRating" min="0" max="5" step="0.1">
+              </div>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="editFeatured" style="width: 3rem; height: 1.5rem; cursor: pointer;">
+              <label class="form-check-label fw-semibold" for="editFeatured">
+                <i class="fa-solid fa-star me-1" style="color: #ffb800;"></i> Featured Product
+              </label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 10px;">Cancel</button>
+          <button type="button" class="btn btn-gradient" id="saveEditBtn">
+            <i class="fa-solid fa-save me-2"></i>Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{> _footer}}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Render star ratings
+      document.querySelectorAll('.stars').forEach(function(el) {
+        var rating = parseFloat(el.getAttribute('data-rating')) || 0;
+        var fullStars = Math.floor(rating);
+        var html = '';
+        for (var i = 0; i < fullStars; i++) {
+          html += '<i class="fa-solid fa-star"></i>';
+        }
+        for (var i = fullStars; i < 5; i++) {
+          html += '<i class="fa-solid fa-star empty"></i>';
+        }
+        html += ' <span style="color: #6c757d; font-size: 0.8rem;">(' + rating + ')</span>';
+        el.innerHTML = html;
+      });
     });
 
-    /* Update Products */
-    /* Add Data */
-    function addData(btn) {
-        let parent = btn.parentElement.id;
-
-        let name = document.getElementById(parent).parentElement.children[1].innerText;
-        let price = document.getElementById(parent).parentElement.children[2].innerText;
-        let featured = document.getElementById(parent).parentElement.children[3].innerText;
-        let rating = document.getElementById(parent).parentElement.children[4].innerText;
-        let company = document.getElementById(parent).parentElement.children[5].innerText;
-        let id = document.getElementById(parent).parentElement.children[6].id;
-
-        document.getElementById('name').value = name;
-        document.getElementById('price').value = price;
-        document.getElementById('rating').value = rating;
-        document.getElementById('id').value = id;
-        document.getElementById('featured').querySelector(`[data-value=${featured}]`).setAttribute('selected', true)
-        document.getElementById('company').querySelector(`[data-value=${company}]`).setAttribute('selected', true)
+    function getRowData(id) {
+      var row = document.querySelector('tr[data-id="' + id + '"]');
+      if (!row) return null;
+      var cells = row.querySelectorAll('td');
+      return {
+        name: cells[1].textContent.trim(),
+        price: parseFloat(cells[2].textContent.replace('$', '')),
+        company: cells[3].querySelector('.company-badge') ? cells[3].querySelector('.company-badge').textContent.trim() : '',
+        rating: cells[4].querySelector('[data-rating]') ? parseFloat(cells[4].querySelector('[data-rating]').getAttribute('data-rating')) : 0,
+        featured: cells[5].querySelector('.featured-yes') !== null,
+      };
     }
 
-    /* Form Submit */
-    function submitForm() {
-        const id = document.getElementById('id').value
-        const name = document.getElementById('name').value
-        const price = document.getElementById('price').value
-        const rating = document.getElementById('rating').value
-        const featured = document.getElementById('featured').value
-        const company = document.getElementById('company').value
+    function editProduct(id) {
+      var data = getRowData(id);
+      if (!data) return;
+      document.getElementById('editId').value = id;
+      document.getElementById('editName').value = data.name;
+      document.getElementById('editPrice').value = data.price;
+      document.getElementById('editCompany').value = data.company;
+      document.getElementById('editRating').value = data.rating;
+      document.getElementById('editFeatured').checked = data.featured;
+      var modal = new bootstrap.Modal(document.getElementById('editModal'));
+      modal.show();
+    }
 
-
-        fetch(`/api/products/${id}`, {
+    var saveBtn = document.getElementById('saveEditBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async function() {
+        var id = document.getElementById('editId').value;
+        var name = document.getElementById('editName').value.trim();
+        var price = document.getElementById('editPrice').value;
+        var company = document.getElementById('editCompany').value;
+        var rating = document.getElementById('editRating').value;
+        var featured = document.getElementById('editFeatured').checked;
+        if (!name || !price || !company) {
+          showToast('warning', 'Validation', 'Please fill in all required fields');
+          return;
+        }
+        var btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+        try {
+          var response = await fetch('/api/products/' + id, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                "name": name,
-                "price": price,
-                "featured": featured,
-                "rating": rating,
-                "company": company,
+              name: name, price: parseFloat(price), company: company,
+              rating: rating ? parseFloat(rating) : undefined, featured: featured,
             }),
-        })
-            .then(data => {
-                alert("Produch Update");
-                location.reload();
-            })
-            .catch(error => {
-                alert("Produch Not Update");
-            });
+          });
+          var result = await response.json();
+          if (response.ok) {
+            showToast('success', 'Updated!', 'Product updated successfully');
+            setTimeout(function() { location.reload(); }, 1200);
+          } else {
+            showToast('error', 'Error!', result.message || 'Failed to update product');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-save me-2"></i>Save Changes';
+          }
+        } catch (err) {
+          showToast('error', 'Error!', 'Network error. Please try again.');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-save me-2"></i>Save Changes';
+        }
+      });
     }
 
-    /* Delete Products */
-    function deleteProduct(btn) {
-        let id = btn.parentElement.id;
-
-        fetch(`/api/products/${id}`, {
-            method: 'delete',
-            headers: {
-                'Content-Type': 'application/json',
+    function deleteProduct(id) {
+      Swal.fire({
+        title: 'Delete Product?',
+        text: 'This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fa-solid fa-trash me-2"></i>Delete',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+      }).then(async function(result) {
+        if (result.isConfirmed) {
+          try {
+            var response = await fetch('/api/products/' + id, { method: 'DELETE' });
+            var data = await response.json();
+            if (response.ok) {
+              Swal.fire({ icon: 'success', title: 'Deleted!', text: 'Product has been deleted.', timer: 1500, showConfirmButton: false });
+              setTimeout(function() { location.reload(); }, 1200);
+            } else {
+              showToast('error', 'Error!', data.message || 'Failed to delete product');
             }
-        })
-            .then(data => {
-                alert("Produch Deleted");
-                location.reload();
-            })
-            .catch(error => {
-                alert("Produch not Deleted");
-            });
+          } catch (err) {
+            showToast('error', 'Error!', 'Network error. Please try again.');
+          }
+        }
+      });
     }
-</script>
 
+    $(document).ready(function() {
+      if ($('#productsTable tbody tr').length > 0) {
+        $('#productsTable').DataTable({
+          responsive: true,
+          pageLength: 10,
+          language: { search: '<i class="fa-solid fa-search me-1"></i> Search:', searchPlaceholder: 'Type to filter...' },
+          columnDefs: [{ orderable: false, targets: 6 }],
+        });
+      }
+    });
+  </script>
+</body>
 </html>

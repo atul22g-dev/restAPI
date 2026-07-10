@@ -1,51 +1,210 @@
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Product</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <title>ProductAPI - Add Product</title>
+  {{> _head}}
 </head>
+<body>
+  {{> _navbar}}
 
-<body class="container mt-4">
-    <h1>Add Product</h1>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 animate-fade-up">
+        <!-- Header -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #198754;">
+            <i class="fa-solid fa-cart-plus"></i>
+          </div>
+          <div>
+            <h3 class="fw-bold mb-1">Add New Product</h3>
+            <p class="text-muted mb-0">Fill in the details below to create a new product</p>
+          </div>
+        </div>
 
-    <form method="post" action="/api/products">
-        <div class="mb-3">
-            <label for="name" class="form-label">Product Name</label><span style="color: red;">*</span>
-            <input type="text" class="form-control" name="name" placeholder="Enter Your Product Name" />
+        <!-- Form Card -->
+        <div class="modern-card p-4 p-lg-5">
+          <form id="productForm" method="post" action="/api/products" novalidate>
+            <div class="row g-4">
+              <!-- Product Name -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" class="form-control modern-input" id="name" name="name" 
+                    placeholder="Product Name" required minlength="2" maxlength="100">
+                  <label for="name">
+                    <i class="fa-solid fa-tag me-1" style="color: #0d6efd;"></i>
+                    Product Name <span style="color: #dc3545;">*</span>
+                  </label>
+                  <div class="invalid-feedback">Please enter a valid product name</div>
+                </div>
+              </div>
+
+              <!-- Product Price -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="number" class="form-control modern-input" id="price" name="price" 
+                    placeholder="Product Price" required min="0" step="0.01">
+                  <label for="price">
+                    <i class="fa-solid fa-indian-rupee-sign me-1" style="color: #0d6efd;"></i>
+                    Product Price <span style="color: #dc3545;">*</span>
+                  </label>
+                  <div class="invalid-feedback">Please enter a valid price (must be 0 or greater)</div>
+                </div>
+              </div>
+
+              <!-- Company -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select class="form-select modern-input" id="company" name="company" required>
+                    <option value="" disabled selected>Select a company</option>
+                    <option value="apple">🍎 Apple</option>
+                    <option value="samsung">📱 Samsung</option>
+                    <option value="dell">💻 Dell</option>
+                    <option value="mi">📲 MI</option>
+                    <option value="asus">🔲 ASUS</option>
+                  </select>
+                  <label for="company">
+                    <i class="fa-solid fa-building me-1" style="color: #0d6efd;"></i>
+                    Company <span style="color: #dc3545;">*</span>
+                  </label>
+                  <div class="invalid-feedback">Please select a company</div>
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="number" class="form-control modern-input" id="rating" name="rating" 
+                    placeholder="Rating" min="0" max="5" step="0.1">
+                  <label for="rating">
+                    <i class="fa-solid fa-star me-1" style="color: #ffb800;"></i>
+                    Rating (0-5)
+                  </label>
+                  <div class="invalid-feedback">Rating must be between 0 and 5</div>
+                </div>
+              </div>
+
+              <!-- Featured Toggle -->
+              <div class="col-12">
+                <div class="d-flex align-items-center gap-3 p-3" style="background: #f8f9fa; border-radius: 12px;">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="featured" name="featured" 
+                      style="width: 3rem; height: 1.5rem; cursor: pointer;">
+                  </div>
+                  <div>
+                    <label for="featured" class="fw-semibold" style="cursor: pointer;">
+                      <i class="fa-solid fa-star me-1" style="color: #ffb800;"></i>
+                      Featured Product
+                    </label>
+                    <p class="text-muted small mb-0">Mark this product as featured to highlight it in listings</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="d-flex gap-3 mt-4 pt-3 border-top">
+              <button type="submit" class="btn btn-gradient" id="submitBtn">
+                <i class="fa-solid fa-plus me-2"></i>
+                <span id="btnText">Add Product</span>
+                <div class="spinner-border spinner-border-sm d-none" id="btnSpinner" role="status"></div>
+              </button>
+              <a href="/" class="btn btn-outline-gradient">Cancel</a>
+              <button type="reset" class="btn btn-outline-secondary rounded-pill px-4" style="border-radius: 12px !important;">Reset</button>
+            </div>
+          </form>
         </div>
-        <div class="mb-3">
-            <label for="price" class="form-label">Product Price</label><span style="color: red;">*</span>
-            <input type="number" class="form-control" name="price"
-                placeholder="Enter Your Product Price" />
-        </div> 
-        <div class="mb-3"> 
-            <label for="featured" class="form-label">Product Featured</label>
-            <select class="form-select" name="featured">
-                <option value="false">false</option>
-                <option value="true">true</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="rating" class="form-label">Product Rating</label>
-            <input type="number" class="form-control" name="rating" placeholder="Enter Your Product Rating" />
-        </div>
-        <div class="mb-3">
-            <label for="company" class="form-label">Product Company</label><span style="color: red;">*</span>
-            <select class="form-select" name="company">
-                <option value="apple">apple</option>
-                <option value="samsung">samsung</option>
-                <option value="dell">dell</option>
-                <option value="mi">mi</option>
-                <option value="asus">asus</option>
-            </select>
-        </div>
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Add Product</button>
-        </div>
-    </form>
+      </div>
+    </div>
+  </div>
+
+  {{> _footer}}
+
+  <script>
+    const form = document.getElementById('productForm');
+
+    // Only attach form logic if the form element exists
+    if (form) {
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const btnSpinner = document.getElementById('btnSpinner');
+
+      // Real-time validation
+      const inputs = form.querySelectorAll('.modern-input');
+      inputs.forEach(input => {
+        input.addEventListener('blur', () => {
+          validateField(input);
+        });
+        input.addEventListener('input', () => {
+          if (input.classList.contains('is-invalid')) {
+            validateField(input);
+          }
+        });
+      });
+
+      function validateField(input) {
+        if (input.checkValidity()) {
+          input.classList.remove('is-invalid');
+          input.classList.add('is-valid');
+          return true;
+        } else {
+          input.classList.remove('is-valid');
+          input.classList.add('is-invalid');
+          return false;
+        }
+      }
+
+      // Form submission
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Validate all fields
+        let isValid = true;
+        inputs.forEach(input => {
+          if (!validateField(input)) isValid = false;
+        });
+
+        if (!isValid) return;
+
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.textContent = 'Adding...';
+        btnSpinner.classList.remove('d-none');
+
+        // Build form data
+        const formData = {
+          name: document.getElementById('name').value.trim(),
+          price: parseFloat(document.getElementById('price').value),
+          featured: document.getElementById('featured').checked,
+          rating: document.getElementById('rating').value ? parseFloat(document.getElementById('rating').value) : undefined,
+          company: document.getElementById('company').value,
+        };
+
+        try {
+          const response = await fetch('/api/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            showToast('success', 'Success!', 'Product created successfully!');
+            setTimeout(() => { window.location.href = '/update'; }, 1500);
+          } else {
+            showToast('error', 'Error!', result.message || 'Failed to create product');
+            submitBtn.disabled = false;
+            btnText.textContent = 'Add Product';
+            btnSpinner.classList.add('d-none');
+          }
+        } catch (err) {
+          showToast('error', 'Error!', 'Network error. Please try again.');
+          submitBtn.disabled = false;
+          btnText.textContent = 'Add Product';
+          btnSpinner.classList.add('d-none');
+        }
+      });
+    }
+  </script>
 </body>
-
 </html>

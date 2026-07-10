@@ -1,0 +1,97 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+      <div class="brand-icon">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+      <span class="fw-bold">ProductAPI</span>
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto gap-2">
+        <li class="nav-item">
+          <a class="nav-link" href="/" id="nav-home">
+            <i class="fa-solid fa-chart-pie me-1"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/create" id="nav-create">
+            <i class="fa-solid fa-plus me-1"></i> Add Product
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/update" id="nav-manage">
+            <i class="fa-solid fa-table me-1"></i> Manage
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/api/status" id="nav-status">
+            <i class="fa-solid fa-heart-pulse me-1"></i> Status
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="d-flex ms-2">
+      <button id="darkModeToggle" class="btn nav-link px-3" type="button" title="Toggle dark mode" style="border-radius: 10px; font-size: 1.1rem;">
+        <i class="fa-solid fa-moon" id="darkModeIcon"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Highlight active nav link
+  document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+    const navMap = {
+      '/': 'nav-home',
+      '/create': 'nav-create',
+      '/update': 'nav-manage',
+      '/api/status': 'nav-status',
+    };
+    const activeId = navMap[path] || '';
+    if (activeId) {
+      const el = document.getElementById(activeId);
+      if (el) el.classList.add('active');
+    }
+  });
+</script>
+
+<script>
+  // ─── Dark Mode ──────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('darkModeToggle');
+    const icon = document.getElementById('darkModeIcon');
+    const html = document.documentElement;
+
+    // Guard: required DOM elements must exist
+    if (!toggle || !icon) return;
+
+    function setTheme(theme) {
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      // Update meta theme-color
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.content = theme === 'dark' ? '#0f0f1a' : '#0d6efd';
+    }
+
+    // Check localStorage first, then system preference
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      setTheme(saved);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+    }
+
+    // Toggle on click
+    toggle.addEventListener('click', function() {
+      const current = html.getAttribute('data-theme') || 'light';
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  });
+</script>
+

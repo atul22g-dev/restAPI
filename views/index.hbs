@@ -2,18 +2,626 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>ProductAPI - Dashboard</title>
+    {{> _head}}
 </head>
 
-<body class="container mt-4">
-    <h1>REST API</h1>
-    <h2>Create Product <a target="_blank" href="/create">Link</a></h2>
-    <h2>Read Product <a target="_blank" href="/api/products">Link</a></h2>
-    <h2>Update and Delete Product <a target="_blank" href="/update">Link</a></h2>
-</body>
+<body>
+    {{> _navbar}}
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section mb-5 animate-fade-up">
+            <div class="row align-items-center position-relative">
+                <div class="col-lg-7">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="badge bg-primary rounded-pill px-3 py-2">
+                            <i class="fa-solid fa-circle-check me-1"></i> REST API v2
+                        </span>
+                        <span class="badge bg-success rounded-pill px-3 py-2">
+                            <i class="fa-solid fa-bolt me-1"></i> MongoDB
+                        </span>
+                    </div>
+                    <h1 class="hero-title">
+                        Product Management<br>
+                        <span style="background: linear-gradient(135deg, #0d6efd, #6f42c1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">REST API</span>
+                    </h1>
+                    <p class="hero-subtitle mb-4">
+                        A modern, fully-featured REST API for managing products with CRUD operations,
+                        filtering, sorting, pagination, and real-time updates.
+                    </p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="/create" class="btn btn-gradient">
+                            <i class="fa-solid fa-plus me-2"></i>Add Product
+                        </a>
+                        <a href="/update" class="btn btn-outline-light rounded-pill px-4">
+                            <i class="fa-solid fa-table me-2"></i>Manage Products
+                        </a>
+                        <a href="/api/status" class="btn btn-outline-light rounded-pill px-4">
+                            <i class="fa-solid fa-heart-pulse me-2"></i>API Status
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-flex justify-content-center">
+                    <div style="width: 220px; height: 220px; background: radial-gradient(circle, rgba(13,110,253,0.2) 0%, transparent 70%); display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                        <i class="fa-solid fa-bolt" style="font-size: 5rem; color: rgba(255,255,255,0.15);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- API Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-6 col-lg-3 animate-fade-up animate-delay-1">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="stat-icon" style="background: #e8f4fd; color: #0d6efd;">
+                            <i class="fa-solid fa-list"></i>
+                        </div>
+                        <div>
+                            <div class="fs-3 fw-bold text-dark">GET</div>
+                            <div class="text-muted small">Retrieve products</div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <code class="small" style="background: #f0f2f5; padding: 0.3rem 0.6rem; border-radius: 6px;">/api/products</code>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-fade-up animate-delay-2">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="stat-icon" style="background: #d4edda; color: #198754;">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                        <div>
+                            <div class="fs-3 fw-bold text-dark">POST</div>
+                            <div class="text-muted small">Create products</div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <code class="small" style="background: #f0f2f5; padding: 0.3rem 0.6rem; border-radius: 6px;">/api/products</code>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-fade-up animate-delay-3">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="stat-icon" style="background: #fff3cd; color: #ffc107;">
+                            <i class="fa-solid fa-pen"></i>
+                        </div>
+                        <div>
+                            <div class="fs-3 fw-bold text-dark">PUT</div>
+                            <div class="text-muted small">Update products</div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <code class="small" style="background: #f0f2f5; padding: 0.3rem 0.6rem; border-radius: 6px;">/api/products/:id</code>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-fade-up animate-delay-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="stat-icon" style="background: #fde8e8; color: #dc3545;">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
+                        <div>
+                            <div class="fs-3 fw-bold text-dark">DELETE</div>
+                            <div class="text-muted small">Delete products</div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <code class="small" style="background: #f0f2f5; padding: 0.3rem 0.6rem; border-radius: 6px;">/api/products/:id</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Explorer -->
+        <div class="modern-card p-4 p-lg-5 mb-5 animate-fade-up" id="explorerSection">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h4 class="fw-bold mb-1">
+                        <i class="fa-solid fa-magnifying-glass me-2" style="color: #0d6efd;"></i>
+                        Product Explorer
+                    </h4>
+                    <p class="text-muted mb-0 small">Search and filter products by company, featured status, or name</p>
+                </div>
+                <span class="badge bg-primary rounded-pill px-3 py-2 d-none" id="resultCount">
+                    <i class="fa-solid fa-cube me-1"></i> <span id="countNum">0</span> products
+                </span>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small text-muted mb-1">
+                        <i class="fa-solid fa-building me-1"></i> Company
+                    </label>
+                    <select class="form-select modern-input" id="filterCompany">
+                        <option value="">All Companies</option>
+                        <option value="apple">Apple</option>
+                        <option value="samsung">Samsung</option>
+                        <option value="dell">Dell</option>
+                        <option value="mi">MI</option>
+                        <option value="asus">ASUS</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold small text-muted mb-1">
+                        <i class="fa-solid fa-star me-1"></i> Featured
+                    </label>
+                    <select class="form-select modern-input" id="filterFeatured">
+                        <option value="">All</option>
+                        <option value="true">Featured</option>
+                        <option value="false">Non-Featured</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small text-muted mb-1">
+                        <i class="fa-solid fa-tag me-1"></i> Search Name
+                    </label>
+                    <input type="text" class="form-control modern-input" id="filterSearch" placeholder="Type product name..." autocomplete="off">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold small text-muted mb-1">
+                        <i class="fa-solid fa-list me-1"></i> Per Page
+                    </label>
+                    <select class="form-select modern-input" id="pageSizeSelect" onchange="changePageSize(this.value)">
+                        <option value="8">8</option>
+                        <option value="12">12</option>
+                        <option value="24" selected>24</option>
+                        <option value="48">48</option>
+                        <option value="96">96</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex gap-2 pt-1">
+                        <button class="btn btn-gradient flex-fill" onclick="searchProducts()">
+                            <i class="fa-solid fa-search"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary flex-fill" onclick="clearFilters()"
+                            style="border-radius: 12px !important;">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="text-center py-5 d-none" id="loadingState">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                <p class="text-muted">Searching products...</p>
+            </div>
+
+            <!-- Error State -->
+            <div class="text-center py-5 d-none" id="errorState">
+                <i class="fa-solid fa-circle-exclamation mb-3" style="font-size: 3rem; color: #dc3545;"></i>
+                <h5 class="text-danger">Something went wrong</h5>
+                <p class="text-muted small" id="errorMessage">Could not fetch products. Please try again.</p>
+                <button class="btn btn-outline-gradient mt-2" onclick="searchProducts()">
+                    <i class="fa-solid fa-rotate me-2"></i>Retry
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div class="text-center py-5 d-none" id="emptyState">
+                <i class="fa-solid fa-box-open mb-3" style="font-size: 3rem; color: #dde0e3;"></i>
+                <h5 class="text-muted">No products found</h5>
+                <p class="text-muted small">Try adjusting your filters or <a href="/create" class="fw-semibold">add a new product</a></p>
+            </div>
+
+            <!-- Results Grid -->
+            <div class="d-none" id="resultsContainer">
+                <div class="row g-3" id="resultsGrid"></div>
+
+                <!-- Pagination Footer -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4 pt-3 border-top">
+                    <div class="d-flex align-items-center gap-2">
+                        <small class="text-muted" id="resultsInfo">Showing 0-0 of 0</small>
+                    </div>
+                    <nav aria-label="Product pagination">
+                        <ul class="pagination pagination-sm mb-0" id="paginationControls">
+                            <li class="page-item disabled" id="prevPageLi">
+                                <button class="page-link" onclick="goToPage(currentPage - 1)" aria-label="Previous">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                            </li>
+                            <li class="page-item active" id="pageNumLi_1"><button class="page-link" onclick="goToPage(1)">1</button></li>
+                            <li class="page-item disabled" id="nextPageLi">
+                                <button class="page-link" onclick="goToPage(currentPage + 1)" aria-label="Next">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h4 class="fw-bold mb-4 animate-fade-up">
+            <i class="fa-solid fa-bolt me-2" style="color: #0d6efd;"></i>
+            Quick Actions
+        </h4>
+        <div class="row g-4 mb-5">
+            <div class="col-md-4 animate-fade-up animate-delay-1">
+                <a href="/create" class="action-card">
+                    <div class="action-card-icon" style="background: linear-gradient(135deg, #e8f4fd, #d0e8ff); color: #0d6efd;">
+                        <i class="fa-solid fa-cart-plus"></i>
+                    </div>
+                    <h5 class="fw-bold">Add Product</h5>
+                    <p class="text-muted small mb-0">Create a new product with name, price, rating, and company details.</p>
+                </a>
+            </div>
+            <div class="col-md-4 animate-fade-up animate-delay-2">
+                <a href="/update" class="action-card">
+                    <div class="action-card-icon" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); color: #198754;">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <h5 class="fw-bold">Manage Products</h5>
+                    <p class="text-muted small mb-0">View, edit, and delete products in an interactive data table.</p>
+                </a>
+            </div>
+            <div class="col-md-4 animate-fade-up animate-delay-3">
+                <a href="/api/products" class="action-card">
+                    <div class="action-card-icon" style="background: linear-gradient(135deg, #f3e5f5, #e1bee7); color: #6f42c1;">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <h5 class="fw-bold">API Explorer</h5>
+                    <p class="text-muted small mb-0">Browse the API response with filtering, sorting, and pagination.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{> _footer}}
+
+<style>
+/* ─── Filter Reset Animation ──────────────────────────────────────────── */
+@keyframes filterReset {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.02); }
+  60% { filter: brightness(1.15); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+.filter-resetting .form-label,
+.filter-resetting .modern-input {
+  animation: filterReset 0.5s ease;
+}
+.filter-resetting .modern-input {
+  border-color: #0d6efd !important;
+  transition: border-color 0.3s ease;
+}
+</style>
+
+<script>
+// ─── State ──────────────────────────────────────────────────────────────
+var currentPage = 1;
+var pageSize = 24;
+var totalPages = 0;
+var totalResults = 0;
+var searchDebounceTimer = null;
+
+// ═══ URL Query Parameter Syncing ═══════════════════════════════════════
+
+// Reads URL params and sets filter values. Returns true if any filters were set.
+function applyFiltersFromURL() {
+  var params = new URLSearchParams(window.location.search);
+  var changed = false;
+
+  var company = params.get('company');
+  if (company) {
+    document.getElementById('filterCompany').value = company;
+    changed = true;
+  }
+
+  var featured = params.get('featured');
+  if (featured) {
+    document.getElementById('filterFeatured').value = featured;
+    changed = true;
+  }
+
+  var search = params.get('search');
+  if (search) {
+    document.getElementById('filterSearch').value = search;
+    changed = true;
+  }
+
+  var limit = params.get('limit');
+  if (limit) {
+    document.getElementById('pageSizeSelect').value = limit;
+    pageSize = parseInt(limit);
+    changed = true;
+  }
+
+  var page = parseInt(params.get('page'));
+  currentPage = (page > 0) ? page : 1;
+
+  return changed;
+}
+
+// Writes current filter state to the browser URL without adding to history
+function syncFiltersToURL() {
+  var params = new URLSearchParams();
+  var company = document.getElementById('filterCompany').value;
+  var featured = document.getElementById('filterFeatured').value;
+  var search = document.getElementById('filterSearch').value.trim();
+
+  if (company) params.set('company', company);
+  if (featured) params.set('featured', featured);
+  if (search) params.set('search', search);
+  if (pageSize !== 24) params.set('limit', pageSize);
+  if (currentPage > 1) params.set('page', currentPage);
+
+  var newUrl = window.location.pathname;
+  var paramsString = params.toString();
+  if (paramsString) {
+    newUrl += '?' + paramsString;
+  }
+  window.history.replaceState({ filters: paramsString }, '', newUrl);
+}
+
+// ═══ Debounce & Auto-Search ════════════════════════════════════════════
+
+function debounce(fn, delay) {
+  return function() {
+    var context = this;
+    var args = arguments;
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(function() {
+      fn.apply(context, args);
+    }, delay);
+  };
+}
+
+function autoSearch() {
+  currentPage = 1;
+  searchProducts();
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function renderPagination() {
+  var paginationHtml = '';
+  var maxVisiblePages = 5;
+
+  // Previous button
+  paginationHtml += '<li class="page-item' + (currentPage <= 1 ? ' disabled' : '') + '">';
+  paginationHtml += '<button class="page-link" onclick="goToPage(currentPage - 1)" aria-label="Previous">';
+  paginationHtml += '<i class="fa-solid fa-chevron-left"></i></button></li>';
+
+  // Calculate which page numbers to show
+  var startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  var endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+  if (endPage - startPage < maxVisiblePages - 1) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  // First page + ellipsis
+  if (startPage > 1) {
+    paginationHtml += '<li class="page-item"><button class="page-link" onclick="goToPage(1)">1</button></li>';
+    if (startPage > 2) {
+      paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+    }
+  }
+
+  // Page numbers
+  for (var p = startPage; p <= endPage; p++) {
+    paginationHtml += '<li class="page-item' + (p === currentPage ? ' active' : '') + '">';
+    paginationHtml += '<button class="page-link" onclick="goToPage(' + p + ')">' + p + '</button></li>';
+  }
+
+  // Last page + ellipsis
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+    }
+    paginationHtml += '<li class="page-item"><button class="page-link" onclick="goToPage(' + totalPages + ')">' + totalPages + '</button></li>';
+  }
+
+  // Next button
+  paginationHtml += '<li class="page-item' + (currentPage >= totalPages ? ' disabled' : '') + '">';
+  paginationHtml += '<button class="page-link" onclick="goToPage(currentPage + 1)" aria-label="Next">';
+  paginationHtml += '<i class="fa-solid fa-chevron-right"></i></button></li>';
+
+  document.getElementById('paginationControls').innerHTML = paginationHtml;
+
+  // Results info
+  var startItem = (currentPage - 1) * pageSize + 1;
+  var endItem = Math.min(currentPage * pageSize, totalResults);
+  document.getElementById('resultsInfo').textContent = 'Showing ' + startItem + '-' + endItem + ' of ' + totalResults;
+}
+
+function goToPage(page) {
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  searchProducts();
+}
+
+function changePageSize(size) {
+  pageSize = parseInt(size);
+  currentPage = 1;
+  searchProducts();
+}
+
+function searchProducts() {
+  var company = document.getElementById('filterCompany').value;
+  var featured = document.getElementById('filterFeatured').value;
+  var search = document.getElementById('filterSearch').value.trim();
+
+  var resultsContainer = document.getElementById('resultsContainer');
+  var loadingState = document.getElementById('loadingState');
+  var errorState = document.getElementById('errorState');
+  var emptyState = document.getElementById('emptyState');
+  var resultsGrid = document.getElementById('resultsGrid');
+  var resultCount = document.getElementById('resultCount');
+  var countNum = document.getElementById('countNum');
+
+  // Hide all result states
+  resultsContainer.classList.add('d-none');
+  errorState.classList.add('d-none');
+  emptyState.classList.add('d-none');
+  resultCount.classList.add('d-none');
+  loadingState.classList.remove('d-none');
+
+  // Build query params
+  var params = new URLSearchParams();
+  if (company) params.append('company', company);
+  if (featured) params.append('featured', featured);
+  if (search) params.append('search', search);
+  params.append('page', currentPage);
+  params.append('limit', pageSize);
+
+  fetch('/api/products?' + params.toString())
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      loadingState.classList.add('d-none');
+
+      var products = data.data.products;
+      totalResults = data.data.pagination ? data.data.pagination.total : (products ? products.length : 0);
+      totalPages = data.data.pagination ? data.data.pagination.pages : 1;
+
+      if (!products || products.length === 0) {
+        emptyState.classList.remove('d-none');
+        return;
+      }
+
+      // Render product cards
+      var html = '';
+      for (var i = 0; i < products.length; i++) {
+        var p = products[i];
+        var rating = p.rating || 0;
+        var fullStars = Math.floor(rating);
+
+        var starsHtml = '';
+        for (var s = 0; s < fullStars; s++) {
+          starsHtml += '<i class="fa-solid fa-star"></i>';
+        }
+        for (var s = fullStars; s < 5; s++) {
+          starsHtml += '<i class="fa-solid fa-star empty"></i>';
+        }
+
+        var badgeClass = 'company-apple';
+        if (p.company === 'samsung') badgeClass = 'company-samsung';
+        else if (p.company === 'dell') badgeClass = 'company-dell';
+        else if (p.company === 'mi') badgeClass = 'company-mi';
+        else if (p.company === 'asus') badgeClass = 'company-asus';
+
+        html += '<div class="col-md-6 col-lg-4">';
+        html += '<div class="product-card">';
+        html += '<div class="d-flex justify-content-between align-items-start mb-3">';
+        html += '<div>';
+        html += '<h6 class="fw-bold mb-1 product-name">' + escapeHtml(p.name) + '</h6>';
+        html += '<div class="stars mb-0">' + starsHtml + '</div>';
+        html += '</div>';
+        if (p.featured) {
+          html += '<span class="featured-badge featured-yes"><i class="fa-solid fa-bolt me-1"></i>FEATURED</span>';
+        }
+        html += '</div>';
+        html += '<div class="d-flex justify-content-between align-items-center">';
+        html += '<span class="fs-4 fw-bold" style="color: #198754;">$' + p.price + '</span>';
+        html += '<span class="company-badge ' + badgeClass + '"><i class="fa-solid fa-building"></i> ' + escapeHtml(p.company) + '</span>';
+        html += '</div>';
+        html += '<div class="mt-3 pt-3 border-top d-flex justify-content-end gap-2">';
+        html += '<a href="/api/products/' + p._id + '" target="_blank" class="btn btn-sm btn-outline-gradient" style="padding: 0.3rem 1rem; font-size: 0.8rem;">';
+        html += '<i class="fa-solid fa-code me-1"></i> View</a>';
+        html += '<a href="/update" class="btn btn-sm btn-gradient" style="padding: 0.3rem 1rem; font-size: 0.8rem;">';
+        html += '<i class="fa-solid fa-pen me-1"></i> Edit</a>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+      }
+
+      resultsGrid.innerHTML = html;
+
+      // Render pagination
+      renderPagination();
+
+      // Sync current state to URL
+      syncFiltersToURL();
+
+      // Show results
+      resultsContainer.classList.remove('d-none');
+      resultCount.classList.remove('d-none');
+      countNum.textContent = totalResults;
+    })
+    .catch(function(err) {
+      loadingState.classList.add('d-none');
+      document.getElementById('errorMessage').textContent = 'Network error. Please check your connection.';
+      errorState.classList.remove('d-none');
+    });
+}
+
+function clearFilters() {
+  clearTimeout(searchDebounceTimer);
+
+  // Reset filter values
+  document.getElementById('filterCompany').value = '';
+  document.getElementById('filterFeatured').value = '';
+  document.getElementById('filterSearch').value = '';
+  document.getElementById('pageSizeSelect').value = '24';
+  currentPage = 1;
+  pageSize = 24;
+
+  // Hide result states
+  document.getElementById('resultsContainer').classList.add('d-none');
+  document.getElementById('errorState').classList.add('d-none');
+  document.getElementById('emptyState').classList.add('d-none');
+  document.getElementById('loadingState').classList.add('d-none');
+  document.getElementById('resultCount').classList.add('d-none');
+
+  // Remove URL params
+  syncFiltersToURL();
+
+  // ── Animate filter reset ────────────────────────────────────────────
+  var explorer = document.getElementById('explorerSection');
+  explorer.classList.add('filter-resetting');
+  setTimeout(function() {
+    explorer.classList.remove('filter-resetting');
+  }, 600);
+}
+
+// ─── Auto-Search on Filter Changes ────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  var searchInput = document.getElementById('filterSearch');
+  var companySelect = document.getElementById('filterCompany');
+  var featuredSelect = document.getElementById('filterFeatured');
+
+  // Apply filters from URL params first (before attaching listeners)
+  var hasUrlFilters = applyFiltersFromURL();
+
+  // Create debounced versions (400ms for text input, 300ms for dropdowns)
+  var debouncedSearch = debounce(autoSearch, 400);
+  var debouncedFilter = debounce(autoSearch, 300);
+
+  // Guard: all three filter elements must exist for this page to work
+  if (!searchInput || !companySelect || !featuredSelect) return;
+
+  // Search input: debounce on keystroke, immediate on Enter
+  searchInput.addEventListener('input', debouncedSearch);
+  searchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      clearTimeout(searchDebounceTimer);
+      autoSearch();
+    }
+  });
+
+  // Company dropdown: debounced auto-search
+  companySelect.addEventListener('change', debouncedFilter);
+
+  // Featured dropdown: debounced auto-search
+  featuredSelect.addEventListener('change', debouncedFilter);
+
+  // If URL had filters, auto-search to show results
+  if (hasUrlFilters) {
+    autoSearch();
+  }
+});
+</script>
+</body>
 </html>

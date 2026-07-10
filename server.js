@@ -2,77 +2,145 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
-
-
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const hbs = require('hbs');
 
 // Load environment variables
 dotenv.config();
 
+// Import connectDB
+const connectDB = require('./db');
+
 // Import routes
-const userRoutes = require('./routes/Product.routes');
+const productRoutes = require('./routes/Product.routes');
 const notesRoutes = require('./routes/notesRoutes.routes');
 
-// Import middleware
-const authMiddleware = require('./middleware/auth.middleware');
+// Import error handler
+const { errorHandler } = require('./middleware/errorHandler');
 
-// Initialize express app
 const app = express();
 
-const bodyParser = require("body-parser")
-app.use(bodyParser.urlencoded({ extended: true }));
+// ─── Security & Monitoring Middleware ────────────────────────────────────────
 
-// Set views folder
-app.set("view engine", "hbs"); // Assuming you're using Handlebars
-app.set("views", path.join(__dirname, "views"));
+// HTTP security headers with relaxed CSP for CDN resources in views
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      'default-src': ["'self'"],
+      'script-src': [
+        "'self'",
+        "'unsafe-inline'",
+        'https://cdn.jsdelivr.net',
+        'https://code.jquery.com',
+        'https://cdn.datatables.net',
+      ],
+      'style-src': [
+        "'self'",
+        "'unsafe-inline'",
+        'https://cdn.jsdelivr.net',
+        'https://cdn.datatables.net',
+        'https://cdnjs.cloudflare.com',
+        'https://fonts.googleapis.com',
+      ],
+      'font-src': [
+        "'self'",
+        'https://cdn.jsdelivr.net',
+        'https://cdnjs.cloudflare.com',
+        'https://fonts.gstatic.com',
+      ],
+      'img-src': ["'self'", 'data:'],
+      'connect-src': ["'self'", 'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com'],
+    },
+  },
+}));
 
+// CORS
+app.use(cors());
 
-// Set partials folder
-var hbs = require('hbs');
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    status: 'error',
+    message: 'Too many requests, please try again later.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', limiter);
+
+// Request logging (only in development)
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+// ─── Body Parsing ───────────────────────────────────────────────────────────
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ─── View Engine (Handlebars) ───────────────────────────────────────────────
+
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
 hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
-// Middlewares
-app.use(express.json()); // for parsing application/json
+// ─── Routes ─────────────────────────────────────────────────────────────────
 
-let DB = process.env.DB;
-mongoose.set("strictQuery", true);
-
-// Connect to MongoDB
-mongoose.connect(DB,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  },
-  (err) => {
-    if (err) {
-      console.error('Failed to connect to MongoDB', err);
-    } else {
-      console.log('Connected to MongoDB');
-    }
-  }
-);
-
-// Routes
-app.get('/db-status', async (req, res) => {
-  const db = mongoose.connection;
-  console.log(db.readyState);
-  if (db.readyState === 1) {
-    res.status(200).send('Database is connected');
-  } else {
-    res.status(500).send('Database is not connected');
-  }
-});
+// View routes
 app.use('/', notesRoutes);
-// app.use('/api/users', authMiddleware, userRoutes);
-app.use('/api/products', userRoutes);
 
+// API routes
+app.use('/api/products', productRoutes);
 
-// Handle not found routes
-app.use((req, res, next) => {
-  res.status(404).send('Sorry, that route does not exist.');
+// Database status endpoint
+app.get('/api/status', async (_req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const states = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+  };
+  res.json({
+    status: 'success',
+    message: `Server is running`,
+    data: {
+      database: states[dbState] || 'unknown',
+      uptime: process.uptime(),
+    },
+  });
 });
 
-// Start server
+// ─── 404 Handler ────────────────────────────────────────────────────────────
+
+app.all('*', (req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: `Route ${req.originalUrl} not found`,
+  });
+});
+
+// ─── Global Error Handler ───────────────────────────────────────────────────
+
+app.use(errorHandler);
+
+// ─── Server Startup ─────────────────────────────────────────────────────────
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+// Only start server if not in test mode
+if (process.env.NODE_ENV !== 'test') {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+    });
+  });
+}
+
+module.exports = app;

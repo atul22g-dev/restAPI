@@ -1,23 +1,21 @@
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-
-// Load environment variables
-dotenv.config();
 
 const connectDB = async () => {
-  let DB = process.env.DB;
+  const DB = process.env.DB;
+
+  if (!DB) {
+    console.error('MongoDB connection string (DB) is not set in environment variables');
+    process.exit(1);
+  }
+
   try {
-    mongoose.set("strictQuery", true);
-    // Connect to MongoDB
-    mongoose.connect(DB,
-      {
-        useNewUrlParser: true,
-      }
-    );
-    console.log('MongoDB Connected...');
+    // Mongoose 8+ uses these as defaults: useNewUrlParser, useUnifiedTopology, strictQuery
+    const conn = await mongoose.connect(DB);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (err) {
     console.error('Failed to connect to MongoDB', err);
-    process.exit(1); // Exit process with failure
+    process.exit(1);
   }
 };
 

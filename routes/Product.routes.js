@@ -2,20 +2,21 @@ const express = require('express');
 const router = express.Router();
 
 const productController = require('../controllers/Product.controller');
+const { validateProductCreate, validateProductUpdate } = require('../middleware/validate');
 
-// Get all users
+// Get all products
 router.get('/', productController.index);
 
-// Create new user
-router.post('/', productController.new);
+// Create new product
+router.post('/', validateProductCreate, productController.new);
 
-// Get single user by id
-router.get('/:user_id', productController.view);
+// Get single product by ID
+router.get('/:id', productController.view);
 
-// Update a user
-router.put('/:user_id', productController.update);
+// Update a product (partial update allowed)
+router.put('/:id', validateProductUpdate, productController.update);
 
-// Delete a user
-router.delete('/:user_id', productController.delete);
+// Delete a product
+router.delete('/:id', productController.delete);
 
 module.exports = router;

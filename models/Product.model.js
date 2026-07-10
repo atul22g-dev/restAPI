@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   company: {
     type: String,
@@ -31,3 +31,4 @@ const productSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Product", productSchema);
+
