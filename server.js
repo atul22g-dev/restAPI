@@ -6,13 +6,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const axios = require('axios');
 const hbs = require('hbs');
 
 // Load environment variables
 dotenv.config();
 
-// Import connectDB
 const connectDB = require('./db');
+const { DB_URI } = connectDB;
 
 // Import routes
 const productRoutes = require('./routes/Product.routes');
@@ -131,6 +132,33 @@ app.get('/api/status', async (_req, res) => {
     },
   });
 });
+
+// Atlas API configuration
+const ATLAS_BASE_URL = 'https://cloud.mongodb.com/api/atlas/v2';
+const ATLAS_PROJECT_ID = process.env.ATLAS_PROJECT_ID;
+const ATLAS_CLUSTER_NAME = process.env.ATLAS_CLUSTER_NAME;
+const ATLAS_PUBLIC_KEY = process.env.ATLAS_PUBLIC_KEY;
+const ATLAS_PRIVATE_KEY = process.env.ATLAS_PRIVATE_KEY;
+
+/**
+ * Validate that all required Atlas environment variables are set
+ */
+const validateAtlasConfig = (res) => {
+  const missing = [];
+  if (!ATLAS_PROJECT_ID) missing.push('ATLAS_PROJECT_ID');
+  if (!ATLAS_CLUSTER_NAME) missing.push('ATLAS_CLUSTER_NAME');
+  if (!ATLAS_PUBLIC_KEY) missing.push('ATLAS_PUBLIC_KEY');
+  if (!ATLAS_PRIVATE_KEY) missing.push('ATLAS_PRIVATE_KEY');
+
+  if (missing.length > 0) {
+    res.status(500).json({
+      status: 'error',
+      message: `Missing Atlas configuration: ${missing.join(', ')}`,
+    });
+    return false;
+  }
+  return true;
+};
 
 // ─── API Documentation ────────────────────────────────────────────────────────
 

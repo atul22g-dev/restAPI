@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
 
-const connectDB = async () => {
-  const DB = process.env.DB;
+const DB_URI = process.env.DB;
 
-  if (!DB) {
+const connectDB = async () => {
+  if (!DB_URI) {
     console.error('MongoDB connection string (DB) is not set in environment variables');
     process.exit(1);
   }
 
   try {
-    // Mongoose 8+ uses these as defaults: useNewUrlParser, useUnifiedTopology, strictQuery
-    const conn = await mongoose.connect(DB);
+    const conn = await mongoose.connect(DB_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (err) {
@@ -20,3 +19,4 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+module.exports.DB_URI = DB_URI;
