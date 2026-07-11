@@ -23,7 +23,6 @@ A modern REST API for product management with CRUD operations, advanced filterin
 - **Responsive Design** — Works on desktop and mobile
 
 ### Developer Tools
-- **API Documentation** — Interactive docs at `/api/docs`
 - **Database Status** — Health check at `/api/status`
 - **Docker Support** — Multi-stage Dockerfile with non-root user
 

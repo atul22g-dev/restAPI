@@ -1,24 +1,25 @@
-const jwt = require('jsonwebtoken');
 
-const authenticateToken = (req, res, next) => {
-  // Get the token from the authorization header
+const cronAuth = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
-  if (token == null) {
-    return res.sendStatus(401); // If no token, return unauthorized
+  if (!authHeader) {
+    return res.status(401).json({
+      success: false,
+      message: "Authorization header missing",
+    });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.sendStatus(403); // If token is not valid, return forbidden
-    }
+  const token = authHeader.replace("Bearer ", "");
 
-    req.user = user; // Set the user in the request object
-    next(); // Proceed to the next middleware or route handler
-  });
+  if (token !== process.env.CRON_SECRET) {
+    return res.status(403).json({
+      success: false,
+      message: "Invalid token",
+    });
+  }
+
+  next();
 };
-
 module.exports = {
-  authenticateToken
+  cronAuth
 };

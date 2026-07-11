@@ -21,6 +21,7 @@ const notesRoutes = require('./routes/notesRoutes.routes');
 
 // Import error handler
 const { errorHandler } = require('./middleware/errorHandler');
+const { cronAuth } = require('./middleware/auth.middleware');
 
 const app = express();
 
@@ -133,84 +134,28 @@ app.get('/api/status', async (_req, res) => {
   });
 });
 
-// Atlas API configuration
-const ATLAS_BASE_URL = 'https://cloud.mongodb.com/api/atlas/v2';
-const ATLAS_PROJECT_ID = process.env.ATLAS_PROJECT_ID;
-const ATLAS_CLUSTER_NAME = process.env.ATLAS_CLUSTER_NAME;
-const ATLAS_PUBLIC_KEY = process.env.ATLAS_PUBLIC_KEY;
-const ATLAS_PRIVATE_KEY = process.env.ATLAS_PRIVATE_KEY;
+// ─── MongoDB Connection CronJob ─────────────────────────────────────────────────────
 
-/**
- * Validate that all required Atlas environment variables are set
- */
-const validateAtlasConfig = (res) => {
-  const missing = [];
-  if (!ATLAS_PROJECT_ID) missing.push('ATLAS_PROJECT_ID');
-  if (!ATLAS_CLUSTER_NAME) missing.push('ATLAS_CLUSTER_NAME');
-  if (!ATLAS_PUBLIC_KEY) missing.push('ATLAS_PUBLIC_KEY');
-  if (!ATLAS_PRIVATE_KEY) missing.push('ATLAS_PRIVATE_KEY');
+app.get("/api/db-heartbeat", cronAuth, async (req, res) => {
+  try {
+    await mongoose.connection.db
+      .collection("heartbeat")
+      .updateOne(
+        { _id: "heartbeat" },
+        { $set: { lastRun: new Date() } },
+        { upsert: true }
+      );
 
-  if (missing.length > 0) {
-    res.status(500).json({
-      status: 'error',
-      message: `Missing Atlas configuration: ${missing.join(', ')}`,
+    res.json({
+      success: true,
+      message: "Heartbeat updated"
     });
-    return false;
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
   }
-  return true;
-};
-
-// ─── API Documentation ────────────────────────────────────────────────────────
-
-app.get('/api/docs', (_req, res) => {
-  res.json({
-    status: 'success',
-    message: 'ProductAPI Documentation',
-    data: {
-      baseUrl: '/api/products',
-      methods: {
-        GET: {
-          description: 'List all products with filtering, sorting, and pagination',
-          queryParameters: {
-            featured: 'Filter by featured status (true/false)',
-            company: 'Filter by company name (apple, samsung, dell, mi, asus)',
-            search: 'Search products by name (case-insensitive regex)',
-            'price[gt]': 'Price greater than (e.g. price[gt]=100)',
-            'price[gte]': 'Price greater than or equal',
-            'price[lt]': 'Price less than',
-            'price[lte]': 'Price less than or equal',
-            'rating[gte]': 'Rating greater than or equal (e.g. rating[gte]=4)',
-            sort: 'Sort by field(s), comma-separated, prefix with - for DESC (e.g. sort=-price,name)',
-            fields: 'Select specific fields, comma-separated (e.g. fields=name,price)',
-            page: 'Page number (default: 1)',
-            limit: 'Results per page (default: 10)',
-          },
-          example: '/api/products?company=apple&price[gte]=500&sort=-price&page=1&limit=5',
-        },
-        'GET /:id': {
-          description: 'Get a single product by its MongoDB ID',
-        },
-        POST: {
-          description: 'Create a new product',
-          body: {
-            name: 'String (required)',
-            price: 'Number (required)',
-            company: 'String: apple, samsung, dell, mi, asus (required)',
-            rating: 'Number: 0-5 (optional, default: 4.9)',
-            featured: 'Boolean (optional, default: false)',
-          },
-        },
-        'PUT /:id': {
-          description: 'Update an existing product (partial updates allowed)',
-          body: 'Any subset of: name, price, company, rating, featured',
-        },
-        'DELETE /:id': {
-          description: 'Delete a product',
-        },
-      },
-      statusEndpoint: '/api/status',
-    },
-  });
 });
 
 // ─── 404 Handler ────────────────────────────────────────────────────────────
