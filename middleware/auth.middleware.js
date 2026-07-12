@@ -1,11 +1,11 @@
 
 const cronAuth = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers['cronauth'];
 
   if (!authHeader) {
     return res.status(401).json({
       success: false,
-      message: "Authorization header missing",
+      message: "cronAuth header missing",
     });
   }
 
