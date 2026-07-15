@@ -13,7 +13,6 @@ const hbs = require('hbs');
 dotenv.config();
 
 const connectDB = require('./db');
-const { DB_URI } = connectDB;
 
 // Import routes
 const productRoutes = require('./routes/Product.routes');
@@ -138,6 +137,7 @@ app.get('/api/status', async (_req, res) => {
 
 app.get("/api/db-heartbeat", cronAuth, async (req, res) => {
   try {
+    await connectDB()
     await mongoose.connection.db
       .collection("heartbeat")
       .updateOne(
