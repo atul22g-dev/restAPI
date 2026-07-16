@@ -115,22 +115,69 @@ app.use('/', notesRoutes);
 app.use('/api/products', productRoutes);
 
 // Database status endpoint
-app.get('/api/status', async (_req, res) => {
-  const dbState = mongoose.connection.readyState;
-  const states = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting',
-  };
-  res.json({
-    status: 'success',
-    message: `Server is running`,
-    data: {
-      database: states[dbState] || 'unknown',
-      uptime: process.uptime(),
-    },
-  });
+app.get('/api/status', async (_req, res, next) => {
+  await connectDB()
+  try {
+    const dbState = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting',
+    };
+
+    // If DB is not connected, return early with a clear status
+    if (dbState !== 1) {
+      return res.status(503).json({
+        status: 'error',
+        message: 'Database is not connected',
+        data: {
+          database: states[dbState] || 'unknown',
+          uptime: process.uptime(),
+          uptime_hours: (process.uptime() / 3600).toFixed(2),
+        },
+      });
+    }
+
+    // Ping is lightweight and fast — replaces expensive serverStatus()
+    const pingResult = await mongoose.connection.db
+      .admin()
+      .ping();
+
+    const dbName = mongoose.connection.db.databaseName;
+
+    // Stats with a 3-second timeout using Promise.race
+    const statsPromise = mongoose.connection.db.stats();
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('stats timed out')), 3000)
+    );
+    const stats = await Promise.race([statsPromise, timeoutPromise]).catch(
+      () => null
+    );
+
+    res.json({
+      status: 'success',
+      message: 'Server is running',
+      data: {
+        database: states[dbState],
+        db_Name: dbName,
+        ping: pingResult.ok === 1 ? 'ok' : 'fail',
+        uptime: process.uptime(),
+        uptime_hours: (process.uptime() / 3600).toFixed(2),
+        collections: stats?.collections ?? null,
+        documents: stats?.objects ?? null,
+        indexes: stats?.indexes ?? null,
+        data_size: stats?.dataSize
+          ? (stats.dataSize / 1024 / 1024).toFixed(2) + ' MB'
+          : null,
+        storage_size: stats?.storageSize
+          ? (stats.storageSize / 1024 / 1024).toFixed(2) + ' MB'
+          : null,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // ─── MongoDB Connection CronJob ─────────────────────────────────────────────────────
