@@ -114,11 +114,56 @@ app.use('/', notesRoutes);
 // API routes
 app.use('/api/products', productRoutes);
 
+/**
+ * Wait for a connecting connection to resolve to either connected or disconnected.
+ * Returns false if disconnected/timed out, true if connected.
+ */
+function waitForConnection(timeoutMs = 8000) {
+  const readyState = mongoose.connection.readyState;
+  // Already connected
+  if (readyState === 1) return Promise.resolve(true);
+  // Not in a connecting state — won't become connected
+  if (readyState !== 2) return Promise.resolve(false);
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        cleanup();
+        resolve(mongoose.connection.readyState === 1);
+      }
+    }, timeoutMs);
+
+    const onConnected = () => {
+      if (!settled) {
+        settled = true;
+        cleanup();
+        resolve(true);
+      }
+    };
+    const onDisconnected = () => {
+      if (!settled) {
+        settled = true;
+        cleanup();
+        resolve(false);
+      }
+    };
+
+    const cleanup = () => {
+      clearTimeout(timer);
+      mongoose.connection.removeListener('connected', onConnected);
+      mongoose.connection.removeListener('disconnected', onDisconnected);
+    };
+
+    mongoose.connection.once('connected', onConnected);
+    mongoose.connection.once('disconnected', onDisconnected);
+  });
+}
+
 // Database status endpoint
 app.get('/api/status', async (_req, res, next) => {
-  await connectDB()
   try {
-    const dbState = mongoose.connection.readyState;
     const states = {
       0: 'disconnected',
       1: 'connected',
@@ -126,7 +171,16 @@ app.get('/api/status', async (_req, res, next) => {
       3: 'disconnecting',
     };
 
-    // If DB is not connected, return early with a clear status
+    let dbState = mongoose.connection.readyState;
+
+    // If connecting, wait to see if it becomes connected or disconnected
+    if (dbState === 2) {
+      const becameConnected = await waitForConnection();
+      // Re-check state after wait
+      dbState = becameConnected ? 1 : mongoose.connection.readyState;
+    }
+
+    // If still not connected after waiting (or was disconnected/disconnecting), return 503
     if (dbState !== 1) {
       return res.status(503).json({
         status: 'error',
