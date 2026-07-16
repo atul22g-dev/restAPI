@@ -163,6 +163,7 @@ function waitForConnection(timeoutMs = 8000) {
 
 // Database status endpoint
 app.get('/api/status', async (_req, res, next) => {
+  await connectDB()
   try {
     const states = {
       0: 'disconnected',
