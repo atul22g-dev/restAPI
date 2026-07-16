@@ -116,20 +116,33 @@ app.use('/api/products', productRoutes);
 
 // Database status endpoint
 app.get('/api/status', async (_req, res) => {
+  await connectDB()
   const dbState = mongoose.connection.readyState;
+  const status = await mongoose.connection.db.admin().serverStatus();
+  const stats = await mongoose.connection.db.stats();
+  const dbName = await mongoose.connection.db.databaseName;
+
   const states = {
     0: 'disconnected',
     1: 'connected',
     2: 'connecting',
     3: 'disconnecting',
   };
+
+
   res.json({
     status: 'success',
-    message: `Server is running`,
+    message: 'Server is running',
     data: {
-      database: states[dbState] || 'unknown',
-      uptime: process.uptime(),
-    },
+      database: dbName,
+      uptime: status.uptime,
+      uptime_hours: (status.uptime / 3600).toFixed(2),
+      collections: stats.collections,
+      documents: stats.objects,
+      indexes: stats.indexes,
+      data_size: (stats.dataSize / 1024 / 1024).toFixed(2) + ' MB',
+      storage_size: (stats.storageSize / 1024 / 1024).toFixed(2) + ' MB',
+    }
   });
 });
 
